@@ -9,6 +9,46 @@ de s'initier et s'entrainer à la création de views en SQL.
 ### Schéma de la base de données
 ![Schéma de la base](./docs/schema.png)
 
+## Contexte
+Vous travaillez pour un hôpital qui souhaite mieux structurer ses données et sécuriser les informations des patients.
+L’hôpital utilise une base de données pour gérer les informations des patients, les traitements, et les médecins.
+Vous devez créer des views pour simplifier l'accès aux informations médicales et restreindre l'accès à des données sensibles.
+
+## Missions
+
+### 1 - Création d’une View pour Simplifier l’Accès aux Informations des Patients
+Créez une view nommée infos_patients pour permettre au personnel administratif de consulter les informations de base 
+des patients sans accéder à leur diagnostic ou traitement.
+
+- Incluez les colonnes : id_patient, nom, prenom, date_naissance, sexe, assurance.
+- Excluez les colonnes adresse, telephone, diagnostic et traitement.
+
+### 2 - Création d’une View pour Suivre les Consultations par Médecin
+Créez une view nommée consultations_medecins qui affiche pour chaque médecin le nombre de consultations effectuées et 
+le nombre de patients uniques rencontrés.
+
+- Incluez les colonnes : id_medecin, nom, prenom, specialite, nombre_consultations, patients_uniques.
+- nombre_consultations représente le nombre total de consultations pour chaque médecin.
+- patients_uniques représente le nombre unique de patients consultés par chaque médecin.
+
+### 3 - Création d’une View pour les Dernières Consultations des Patients
+
+Créez une view nommée derniere_consultation pour afficher la date de la dernière consultation et le diagnostic pour chaque patient.
+
+- Incluez les colonnes id_patient, nom, prenom, date_naissance, date_consultation, et diagnostic. 
+- date_consultation doit être la date la plus récente pour chaque patient
+
+### 4 - Création d’une View pour la Sécurité des Informations Médicales
+Créez une view nommée consultations_secure qui permet de consulter les informations de consultation sans afficher les
+diagnostics ou traitements sensibles.
+
+- Incluez les colonnes : id_consultation, nom, prenom, date_consultation.
+- Utilisez JOIN pour afficher les noms et prénoms des patients, mais masquez les colonnes diagnostic et traitement.
+
+### 5 - Suppression d’une View
+Supprimez la view infos_patients.
+
+
 ## Installation
 - `docker compose up -d` pour démarrer les services
 
@@ -64,4 +104,33 @@ Pour modifier une view, il faut utiliser la commande `CREATE OR REPLACE VIEW`, c
 Pour supprimer une view, il suffit d'utiliser la commande `DROP VIEW`.
 ```sql
     DROP VIEW employes_ville;
+```
+
+### Exemples d'utilisations
+
+#### Exemple 1 : Création d'une View pour la Sécurité
+Imaginons une table `salaries` contenant des informations sensibles comme le salaire des employés. 
+Nous voulons donner accès uniquement à leur nom, prénom, et département.
+
+```sql
+CREATE VIEW infos_employes AS
+SELECT nom, prenom, departement
+FROM salaries;
+```
+
+#### Exemple 2 : Création d'une View pour Simplifier une Requête Complexe
+Supposons que nous ayons plusieurs tables : commandes, clients, et produits. Nous pouvons créer une view pour afficher 
+les détails de chaque commande avec le nom du client et la description du produit.
+
+```sql
+CREATE VIEW details_commandes AS
+SELECT commandes.id_commande, clients.nom_client, produits.description, commandes.quantite
+FROM commandes
+JOIN clients ON commandes.id_client = clients.id_client
+JOIN produits ON commandes.id_produit = produits.id_produit;
+```
+
+En utilisant cette view, la récupération des informations de commande devient plus simple :
+```sql
+SELECT * FROM details_commandes WHERE nom_client = 'Dupont';
 ```
